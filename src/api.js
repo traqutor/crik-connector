@@ -134,6 +134,7 @@ async function downloadResources({ apiOptions, resources, onProgress }) {
 
 async function createFolder(options, parentId, folderName) {
   console.log('createFolder');
+
   const route = `${options.apiRoot}/files`;
   const method = 'POST';
   const params = {
@@ -141,10 +142,15 @@ async function createFolder(options, parentId, folderName) {
     name: folderName,
     type: 'dir'
   };
+
+  const formData = new FormData();
+  formData.append("parentId", parentId);
+  formData.append("name", folderName);
+  formData.append("type", "dir");
+
   return request(method, route)
       .set({ Authorization: `Bearer ${options.apiToken}` })
-      .set({ 'content-type': 'application/json' })
-      .send(params)
+      .send(formData)
 }
 
 function getResourceName(apiOptions, resource) {
