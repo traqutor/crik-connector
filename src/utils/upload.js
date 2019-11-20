@@ -10,8 +10,6 @@ async function readLocalFile() {
         file
       }) });
 
-      console.log('files', files);
-
       resolve(files);
     });
 
