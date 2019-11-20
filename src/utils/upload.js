@@ -3,19 +3,24 @@ async function readLocalFile() {
     const uploadInput = document.createElement("input");
 
     uploadInput.addEventListener('change', _ => {
-      const file = uploadInput.files[0];
-      resolve({
+      let files = [];
+      Array.from(uploadInput.files).forEach(file => { files.push({
         type: file.type,
         name: file.name,
         file
-      });
+      }) });
+
+      console.log('files', files);
+
+      resolve(files);
     });
 
     // This input element in IE11 becomes visible after it is added on the page
     // Hide an input element
     uploadInput.style.visibility = 'hidden';
-
     uploadInput.type = "file";
+    uploadInput.setAttribute("multiple","");
+
     document.body.appendChild(uploadInput);
     uploadInput.click();
     document.body.removeChild(uploadInput);

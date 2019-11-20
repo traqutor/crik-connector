@@ -73,28 +73,31 @@ async function handler(apiOptions, actions) {
 
   const resource = getResource();
   try {
-    const file = await readLocalFile(true);
-    onStart({ name: file.name, size: file.file.size });
-    const response = await api.uploadFileToId({ apiOptions, parentId: resource.id, file, onProgress });
-    const newResource = normalizeResource(response.body[0]);
-    const notifications = getNotifications();
-    const notification = notifUtils.getNotification(notifications, notificationId);
-    const notificationChildrenCount = notification.children.length;
-    let newNotifications;
-    if (notificationChildrenCount > 1) {
-      newNotifications = notifUtils.updateNotification(
-        notifications,
-        notificationId, {
-          children: notifUtils.removeChild(notification.children, notificationChildId)
-        }
-      );
-    } else {
-      newNotifications = notifUtils.removeNotification(notifications, notificationId);
-    }
-    updateNotifications(newNotifications);
-    if (prevResourceId === resource.id) {
-      navigateToDir(resource.id, newResource.id, false);
-    }
+    const files = await readLocalFile(true);
+    files.forEach( async (file) => {
+      onStart({ name: file.name, size: file.file.size });
+      const response = await api.uploadFileToId({ apiOptions, parentId: resource.id, file, onProgress });
+      const newResource = normalizeResource(response.body[0]);
+      const notifications = getNotifications();
+      const notification = notifUtils.getNotification(notifications, notificationId);
+      const notificationChildrenCount = notification.children.length;
+      let newNotifications;
+      if (notificationChildrenCount > 1) {
+        newNotifications = notifUtils.updateNotification(
+            notifications,
+            notificationId, {
+              children: notifUtils.removeChild(notification.children, notificationChildId)
+            }
+        );
+      } else {
+        newNotifications = notifUtils.removeNotification(notifications, notificationId);
+      }
+      updateNotifications(newNotifications);
+      if (prevResourceId === resource.id) {
+        navigateToDir(resource.id, newResource.id, false);
+      }
+    });
+
   } catch (err) {
     onFailError({
       getNotifications,
