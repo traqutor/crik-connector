@@ -168,6 +168,19 @@ async function renameResource(options, id, newName) {
       .send({ name: newName })
 }
 
+async function changeDirectory(options, guid, destination) {
+  console.log('changeDirectory');
+  const route = `${options.apiRoot}/files/${guid}`;
+  const method = 'PATCH';
+  
+  const response = await request(method, route)
+        .set({Authorization: `Bearer ${options.apiToken}`})
+        .type('application/json')
+        .send({ parents: [destination] })
+  
+  return getResourceById(options, response.response.parentId);
+}
+
 async function removeResource(options, resource) {
   console.log('removeResource');
   const route = `${options.apiRoot}/files/${resource.id}`;
@@ -194,5 +207,6 @@ export default {
   downloadResources,
   renameResource,
   removeResources,
-  uploadFileToId
+  uploadFileToId,
+  changeDirectory,
 };
